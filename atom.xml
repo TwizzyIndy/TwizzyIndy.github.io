@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://TwizzyIndy.github.io/"/>
-  <updated>2019-01-26T07:57:06.269Z</updated>
+  <updated>2019-01-26T09:31:59.251Z</updated>
   <id>http://TwizzyIndy.github.io/</id>
   
   <author>
@@ -21,12 +21,45 @@
     <link href="http://TwizzyIndy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/"/>
     <id>http://TwizzyIndy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/</id>
     <published>2019-01-26T07:57:06.000Z</published>
-    <updated>2019-01-26T07:57:06.269Z</updated>
+    <updated>2019-01-26T09:31:59.251Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I"><a href="#Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I" class="headerlink" title="Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I"></a><strong>Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I</strong></h1><p>[ this article based and implemented on <a href="https://blog.csdn.net/autohacker/article/details/50715639" target="_blank" rel="noopener">Autohacker’s blog post on CSDN</a> ]</p><p><strong>Overview</strong><br>I found a post the post which was on CSDN on past three years ago.(yes its really old :( ). He gave us IDA Pro Database file to continuing analyzing for atcmdserver binary which existed in most of Hisilicon PoC based phones from Huawei. I kept reversing that binary since 2016.(but you should know im just a lazy reverse engineer.)</p><p><strong>What is atcmdserver and how it works?</strong><br>Huawei made that binary(located as /system/bin/atcmdserver) as a client which would do everything we sent AT commands from COM Port(Serial Port) and analyze them and output as programmed.</p><p>I guess (but its sure) Huawei made some authorized software which could do services like Changing Sales Region, Making Network Restrictions, Reading FRP Unlocking Keys, Reading Bootloader Unlock Codes, and much more…</p><p>First of all, that client softwares requesting authorize key from phone like this way. </p><p>“AT ^ CHECKAUTHORITY\r\n”<br><img src="media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png" alt="Screen Shot 2018-12-29 at 4.59.03 P"></p><p>replied 128Bytes (really convert 128bytes into hex string.. so output is exactly 256 string ) ..</p><p>Lets take a look how this number comes from ..</p><p>Just load his database in IDA Pro and find the string AT CHECKAUTHORITY.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.29.33%20PM.png" alt="Screen Shot 2019-01-26 at 3.29.33 P"></p><p>just find CHECKAUTHORITY so it would leads u to a global function<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.31.24%20PM.png" alt="Screen Shot 2019-01-26 at 3.31.24 P"></p><p>the function located on 0x36514. Decompile it.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.33.47%20PM.png" alt="Screen Shot 2019-01-26 at 3.33.47 P"></p><p>in that function generate random 4 bytes from /dev/urandom and encrypt it using RSA-1020 (yes its 1020 bit) Bit Public Key. I pointed g_table that is a pointer to a factory public key including Modulus(N) and Exponent(E).<br>I think I need to explain how RSA Encryption works. RSA have two keys which are a public and a private. Encryption need just a public key but decryption doesnt. atcmdserver just encrypt random 4 bytes with Public Key and output the encrypted Big Integer array. So we have to decrypt them with Private Key and encrypt again with same private key and then send result to the phone via AT command as following :</p><p>AT ^ CONFORMAUTHORITY:8123884838348988…<br>reply: OKAY</p><p>we should take a look more in depth ..</p><p>decompile GenerateSeed function<br>it just put Random 4 bytes value into PKCS#1 1.5 Padding format.<br>the padded message would be like following ..</p><p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.59.20%20PM.png" alt="Screen Shot 2019-01-26 at 3.59.20 P"></p><p>and then the put padded formatted array into RSAPublicBlock and get output value.</p><p><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.01.40%20PM.png" alt="Screen Shot 2019-01-26 at 4.01.40 P"></p>]]></content>
     
     <summary type="html">
     
+      
+      
+        &lt;h1 id=&quot;Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I&quot;&gt;&lt;a href=&quot;#Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I&quot; class=&quot;hea
+      
+    
     </summary>
     
+    
+      <category term="Huawei Bootloader" scheme="http://TwizzyIndy.github.io/tags/Huawei-Bootloader/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Sneaking into Huawei Bootloader And ATCMDSERVER</title>
+    <link href="http://TwizzyIndy.github.io/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/"/>
+    <id>http://TwizzyIndy.github.io/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/</id>
+    <published>2019-01-26T07:57:06.000Z</published>
+    <updated>2019-01-26T08:11:51.197Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>Sneaking into Huawei Bootloader &amp; ATCMDSERVER</strong></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;strong&gt;Sneaking into Huawei Bootloader &amp;amp; ATCMDSERVER&lt;/strong&gt;&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+      <category term="Huawei" scheme="http://TwizzyIndy.github.io/tags/Huawei/"/>
     
   </entry>
   

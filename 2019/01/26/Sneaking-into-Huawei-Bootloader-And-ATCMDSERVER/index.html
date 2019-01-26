@@ -5,14 +5,25 @@
   
   <title>Sneaking into Huawei Bootloader And ATCMDSERVER | TwizzyIndy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="Sneaking into Huawei Bootloader &amp;amp; ATCMDSERVER PART I[ this article based and implemented on Autohacker’s blog post on CSDN ] OverviewI found a post the post which was on CSDN on past three years a">
+<meta name="keywords" content="Huawei Bootloader">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Sneaking into Huawei Bootloader And ATCMDSERVER">
 <meta property="og:url" content="http://TwizzyIndy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/index.html">
 <meta property="og:site_name" content="TwizzyIndy">
+<meta property="og:description" content="Sneaking into Huawei Bootloader &amp;amp; ATCMDSERVER PART I[ this article based and implemented on Autohacker’s blog post on CSDN ] OverviewI found a post the post which was on CSDN on past three years a">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-26T07:57:06.269Z">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202019-01-26%20at%203.29.33%20PM.png">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202019-01-26%20at%203.31.24%20PM.png">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202019-01-26%20at%203.33.47%20PM.png">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202019-01-26%20at%203.59.20%20PM.png">
+<meta property="og:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202019-01-26%20at%204.01.40%20PM.png">
+<meta property="og:updated_time" content="2019-01-26T09:31:59.251Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Sneaking into Huawei Bootloader And ATCMDSERVER">
+<meta name="twitter:description" content="Sneaking into Huawei Bootloader &amp;amp; ATCMDSERVER PART I[ this article based and implemented on Autohacker’s blog post on CSDN ] OverviewI found a post the post which was on CSDN on past three years a">
+<meta name="twitter:image" content="http://twizzyindy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png">
   
     <link rel="alternative" href="/atom.xml" title="TwizzyIndy" type="application/atom+xml">
   
@@ -175,6 +186,10 @@
         
 
         
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Huawei-Bootloader/">Huawei Bootloader</a></li></ul>
+    </div>
+
         <div class="clearfix"></div>
       </div>
       
@@ -182,7 +197,25 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        
+        <h1 id="Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I"><a href="#Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I" class="headerlink" title="Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I"></a><strong>Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I</strong></h1><p>[ this article based and implemented on <a href="https://blog.csdn.net/autohacker/article/details/50715639" target="_blank" rel="noopener">Autohacker’s blog post on CSDN</a> ]</p>
+<p><strong>Overview</strong><br>I found a post the post which was on CSDN on past three years ago.(yes its really old :( ). He gave us IDA Pro Database file to continuing analyzing for atcmdserver binary which existed in most of Hisilicon PoC based phones from Huawei. I kept reversing that binary since 2016.(but you should know im just a lazy reverse engineer.)</p>
+<p><strong>What is atcmdserver and how it works?</strong><br>Huawei made that binary(located as /system/bin/atcmdserver) as a client which would do everything we sent AT commands from COM Port(Serial Port) and analyze them and output as programmed.</p>
+<p>I guess (but its sure) Huawei made some authorized software which could do services like Changing Sales Region, Making Network Restrictions, Reading FRP Unlocking Keys, Reading Bootloader Unlock Codes, and much more…</p>
+<p>First of all, that client softwares requesting authorize key from phone like this way. </p>
+<p>“AT ^ CHECKAUTHORITY\r\n”<br><img src="media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png" alt="Screen Shot 2018-12-29 at 4.59.03 P"></p>
+<p>replied 128Bytes (really convert 128bytes into hex string.. so output is exactly 256 string ) ..</p>
+<p>Lets take a look how this number comes from ..</p>
+<p>Just load his database in IDA Pro and find the string AT CHECKAUTHORITY.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.29.33%20PM.png" alt="Screen Shot 2019-01-26 at 3.29.33 P"></p>
+<p>just find CHECKAUTHORITY so it would leads u to a global function<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.31.24%20PM.png" alt="Screen Shot 2019-01-26 at 3.31.24 P"></p>
+<p>the function located on 0x36514. Decompile it.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.33.47%20PM.png" alt="Screen Shot 2019-01-26 at 3.33.47 P"></p>
+<p>in that function generate random 4 bytes from /dev/urandom and encrypt it using RSA-1020 (yes its 1020 bit) Bit Public Key. I pointed g_table that is a pointer to a factory public key including Modulus(N) and Exponent(E).<br>I think I need to explain how RSA Encryption works. RSA have two keys which are a public and a private. Encryption need just a public key but decryption doesnt. atcmdserver just encrypt random 4 bytes with Public Key and output the encrypted Big Integer array. So we have to decrypt them with Private Key and encrypt again with same private key and then send result to the phone via AT command as following :</p>
+<p>AT ^ CONFORMAUTHORITY:8123884838348988…<br>reply: OKAY</p>
+<p>we should take a look more in depth ..</p>
+<p>decompile GenerateSeed function<br>it just put Random 4 bytes value into PKCS#1 1.5 Padding format.<br>the padded message would be like following ..</p>
+<p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.59.20%20PM.png" alt="Screen Shot 2019-01-26 at 3.59.20 P"></p>
+<p>and then the put padded formatted array into RSAPublicBlock and get output value.</p>
+<p><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.01.40%20PM.png" alt="Screen Shot 2019-01-26 at 4.01.40 P"></p>
+
       
     </div>
     
@@ -193,7 +226,7 @@
         <p><span>Title:</span><a href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a></p>
         <p><span>Author:</span><a href="/" title="访问 TwizzyIndy 的个人博客">TwizzyIndy</a></p>
         <p><span>Posted:</span>2019-01-26 - 14:27</p>
-        <p><span>Modified:</span>2019-01-26 - 14:27</p>
+        <p><span>Modified:</span>2019-01-26 - 16:01</p>
         <p>
             <span>URL:</span><a class="post-url" href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" title="Sneaking into Huawei Bootloader And ATCMDSERVER">http://TwizzyIndy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/</a>
             <span class="copy-path" data-clipboard-text="原文: http://TwizzyIndy.github.io/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/　　作者: TwizzyIndy" title="CopyToClipboard"><i class="fa fa-clipboard"></i></span>
@@ -207,8 +240,8 @@
 <nav id="article-nav">
   
   
-    <a href="/2016/11/01/About/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">About</div>
+    <a href="/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Sneaking into Huawei Bootloader And ATCMDSERVER</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -219,7 +252,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I"><span class="toc-number">1.</span> <span class="toc-text">Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I</span></a></li></ol>
 </div>
 <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
 
@@ -262,12 +295,12 @@
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2016/11/01/About/" title="下一篇: About">
+            <a href="/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" title="下一篇: Sneaking into Huawei Bootloader And ATCMDSERVER">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/About/">About</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/11/01/About/">About</a></li></ul>
     <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
     <script>
         $(".post-list").addClass("toc-article");

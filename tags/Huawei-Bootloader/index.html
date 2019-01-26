@@ -3,11 +3,11 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>TwizzyIndy</title>
+  <title>Tag: Huawei Bootloader | TwizzyIndy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="TwizzyIndy">
-<meta property="og:url" content="http://TwizzyIndy.github.io/index.html">
+<meta property="og:url" content="http://TwizzyIndy.github.io/tags/Huawei-Bootloader/index.html">
 <meta property="og:site_name" content="TwizzyIndy">
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
@@ -25,9 +25,6 @@
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   
-    
-    
-  
   
   <!-- 加载特效 -->
     <script src="/js/pace.js"></script>
@@ -37,10 +34,10 @@
           rootUrl: '/',
           fancybox: false,
           animate: true,
-          isHome: true,
+          isHome: false,
           isPost: false,
           isArchive: false,
-          isTag: false,
+          isTag: true,
           isCategory: false,
           open_in_new: false
       }
@@ -154,191 +151,52 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER" class="article article-type-post" itemscope="" itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" class="article-date">
-      <time datetime="2019-01-26T07:57:06.000Z" itemprop="datePublished">2019-01-26</time>
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+          <div class="article-meta">
+              <a href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" class="archive-article-date">
+      <time datetime="2019-01-26T07:57:06.000Z" itemprop="datePublished">01-26</time>
 </a>
-    </div>
-  
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        </div>
+         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a>
+      <a class="archive-article-title" href="/2019/01/26/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a>
     </h1>
   
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="article-info info-on-archive">
           
-        <h1 id="Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I"><a href="#Sneaking-into-Huawei-Bootloader-amp-ATCMDSERVER-PART-I" class="headerlink" title="Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I"></a><strong>Sneaking into Huawei Bootloader &amp; ATCMDSERVER PART I</strong></h1><p>[ this article based and implemented on <a href="https://blog.csdn.net/autohacker/article/details/50715639" target="_blank" rel="noopener">Autohacker’s blog post on CSDN</a> ]</p>
-<p><strong>Overview</strong><br>I found a post the post which was on CSDN on past three years ago.(yes its really old :( ). He gave us IDA Pro Database file to continuing analyzing for atcmdserver binary which existed in most of Hisilicon PoC based phones from Huawei. I kept reversing that binary since 2016.(but you should know im just a lazy reverse engineer.)</p>
-<p><strong>What is atcmdserver and how it works?</strong><br>Huawei made that binary(located as /system/bin/atcmdserver) as a client which would do everything we sent AT commands from COM Port(Serial Port) and analyze them and output as programmed.</p>
-<p>I guess (but its sure) Huawei made some authorized software which could do services like Changing Sales Region, Making Network Restrictions, Reading FRP Unlocking Keys, Reading Bootloader Unlock Codes, and much more…</p>
-<p>First of all, that client softwares requesting authorize key from phone like this way. </p>
-<p>“AT ^ CHECKAUTHORITY\r\n”<br><img src="media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png" alt="Screen Shot 2018-12-29 at 4.59.03 P"></p>
-<p>replied 128Bytes (really convert 128bytes into hex string.. so output is exactly 256 string ) ..</p>
-<p>Lets take a look how this number comes from ..</p>
-<p>Just load his database in IDA Pro and find the string AT CHECKAUTHORITY.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.29.33%20PM.png" alt="Screen Shot 2019-01-26 at 3.29.33 P"></p>
-<p>just find CHECKAUTHORITY so it would leads u to a global function<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.31.24%20PM.png" alt="Screen Shot 2019-01-26 at 3.31.24 P"></p>
-<p>the function located on 0x36514. Decompile it.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.33.47%20PM.png" alt="Screen Shot 2019-01-26 at 3.33.47 P"></p>
-<p>in that function generate random 4 bytes from /dev/urandom and encrypt it using RSA-1020 (yes its 1020 bit) Bit Public Key. I pointed g_table that is a pointer to a factory public key including Modulus(N) and Exponent(E).<br>I think I need to explain how RSA Encryption works. RSA have two keys which are a public and a private. Encryption need just a public key but decryption doesnt. atcmdserver just encrypt random 4 bytes with Public Key and output the encrypted Big Integer array. So we have to decrypt them with Private Key and encrypt again with same private key and then send result to the phone via AT command as following :</p>
-<p>AT ^ CONFORMAUTHORITY:8123884838348988…<br>reply: OKAY</p>
-<p>we should take a look more in depth ..</p>
-<p>decompile GenerateSeed function<br>it just put Random 4 bytes value into PKCS#1 1.5 Padding format.<br>the padded message would be like following ..</p>
-<p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.59.20%20PM.png" alt="Screen Shot 2019-01-26 at 3.59.20 P"></p>
-<p>and then the put padded formatted array into RSAPublicBlock and get output value.</p>
-<p><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.01.40%20PM.png" alt="Screen Shot 2019-01-26 at 4.01.40 P"></p>
 
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
+          
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Huawei-Bootloader/">Huawei Bootloader</a></li></ul>
     </div>
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
-  
 </article>
-
-
-
-
-
-
-
-
-
   
-    <article id="post-media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER" class="article article-type-post" itemscope="" itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/" class="article-date">
-      <time datetime="2019-01-26T07:57:06.000Z" itemprop="datePublished">2019-01-26</time>
-</a>
-    </div>
+    </div></section>
   
-  <div class="article-inner">
+
     
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/26/media/15484909712505/Sneaking-into-Huawei-Bootloader-And-ATCMDSERVER/">Sneaking into Huawei Bootloader And ATCMDSERVER</a>
-    </h1>
-  
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p><strong>Sneaking into Huawei Bootloader &amp; ATCMDSERVER</strong></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Huawei/">Huawei</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-About" class="article article-type-post" itemscope="" itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/11/01/About/" class="article-date">
-      <time datetime="2016-10-31T18:43:28.000Z" itemprop="datePublished">2016-11-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/01/About/">About</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to my private blog.</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/misc/">misc</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-  
 </div>
       <footer id="footer">
     <div class="outer">
@@ -383,6 +241,17 @@
         };
     })
 </script>
+
+    <button class="hide-labels">TAG 开关</button>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js">
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("button").click(function() {
+                $(".article-info").toggle(200);
+            });
+        });
+    </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
 </script>
