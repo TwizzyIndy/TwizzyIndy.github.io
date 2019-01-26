@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TwizzyIndy</title>
+  
+  <subtitle>sometimes a good guy but .. sometimes a bad one ..</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://TwizzyIndy.github.io/"/>
+  <updated>2018-02-07T09:13:02.000Z</updated>
+  <id>http://TwizzyIndy.github.io/</id>
+  
+  <author>
+    <name>TwizzyIndy</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>About</title>
+    <link href="http://TwizzyIndy.github.io/2016/11/01/About/"/>
+    <id>http://TwizzyIndy.github.io/2016/11/01/About/</id>
+    <published>2016-10-31T18:43:28.000Z</published>
+    <updated>2018-02-07T09:13:02.000Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to my private blog.</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span clas
+      
+    
+    </summary>
+    
+    
+      <category term="misc" scheme="http://TwizzyIndy.github.io/tags/misc/"/>
+    
+  </entry>
+  
+</feed>
