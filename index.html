@@ -184,23 +184,26 @@
 <p><strong>What is atcmdserver and how it works?</strong><br>Huawei made that binary(located as /system/bin/atcmdserver) as a client which would do everything we sent AT commands from COM Port(Serial Port) and analyze them and output as programmed.</p>
 <p>I guess (but its sure) Huawei made some authorized software which could do services like Changing Sales Region, Making Network Restrictions, Reading FRP Unlocking Keys, Reading Bootloader Unlock Codes, and much more…</p>
 <p>First of all, that client softwares requesting authorize key from phone like this way. </p>
-<p>“AT ^ CHECKAUTHORITY\r\n”<br><img src="media/15484909712505/Screen%20Shot%202018-12-29%20at%204.59.03%20PM.png" alt="Screen Shot 2018-12-29 at 4.59.03 P"></p>
+<p>“AT ^ CHECKAUTHORITY\r\n”<br><img src="media/15484909712505/img1.png" alt="img1"></p>
 <p>replied 128Bytes (really convert 128bytes into hex string.. so output is exactly 256 string ) ..</p>
 <p>Lets take a look how this number comes from ..</p>
-<p>Just load his database in IDA Pro and find the string AT CHECKAUTHORITY.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.29.33%20PM.png" alt="Screen Shot 2019-01-26 at 3.29.33 P"></p>
-<p>just find CHECKAUTHORITY so it would leads u to a global function<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.31.24%20PM.png" alt="Screen Shot 2019-01-26 at 3.31.24 P"></p>
-<p>the function located on 0x36514. Decompile it.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.33.47%20PM.png" alt="Screen Shot 2019-01-26 at 3.33.47 P"></p>
+<p>Just load his database in IDA Pro and find the string AT CHECKAUTHORITY.<br><img src="media/15484909712505/img2.png" alt="img2"></p>
+<p>just find CHECKAUTHORITY so it would leads u to a global function<br><img src="media/15484909712505/img3.png" alt="img3"></p>
+<p>the function located on 0x36514. Decompile it.<br><img src="media/15484909712505/img4.png" alt="img4"></p>
 <p>in that function generate random 4 bytes from /dev/urandom and encrypt it using RSA-1020 (yes its 1020 bit) Bit Public Key. I pointed g_table that is a pointer to a factory public key including Modulus(N) and Exponent(E).<br>I think I need to explain how RSA Encryption works. RSA have two keys which are a public and a private. Encryption need just a public key but decryption doesnt. atcmdserver just encrypt random 4 bytes with Public Key and output the encrypted Big Integer array. So we have to decrypt them with Private Key and encrypt again with same private key and then send result to the phone via AT command as following :</p>
 <p>AT ^ CONFORMAUTHORITY:8123884838348988…<br>reply: OKAY</p>
 <p>we should take a look more in depth ..</p>
 <p>decompile GenerateSeed function<br>it just put Random 4 bytes value into PKCS#1 1.5 Padding format.<br>the padded message would be like following ..</p>
-<p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%203.59.20%20PM.png" alt="Screen Shot 2019-01-26 at 3.59.20 P"></p>
+<p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/img5.png" alt="img5"></p>
 <p>and then the put padded formatted array into RSAPublicBlock and get output value.</p>
-<p><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.01.40%20PM.png" alt="Screen Shot 2019-01-26 at 4.01.40 P"></p>
+<p><img src="media/15484909712505/img6.png" alt="img6"></p>
 <p>My decompilation looks fine huh?<br>I found that they used RSARef Library when I tried to load the fastboot.img (you could extract it from firmware package UPDATE.APP or get from /dev/block/by-name/*/fastboot).</p>
-<p>Look at the last bytes with ordinary hex editor.<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.35.43%20PM.png" alt="Screen Shot 2019-01-26 at 4.35.43 P"></p>
-<p>its strange .. take a look that in plaintext mode ..<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.37.12%20PM.png" alt="Screen Shot 2019-01-26 at 4.37.12 P"></p>
-<p>a symbol table of fastboot .. they generated using nm (included in Android NDK Bundle) ..<br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.43.52%20PM.png" alt="Screen Shot 2019-01-26 at 4.43.52 P"><br><img src="media/15484909712505/Screen%20Shot%202019-01-26%20at%204.44.12%20PM.png" alt="Screen Shot 2019-01-26 at 4.44.12 P"></p>
+<p>Look at the last bytes with ordinary hex editor.<br><img src="media/15484909712505/img7.png" alt="img7"></p>
+<p>its strange .. take a look that in plaintext mode ..<br><img src="media/15484909712505/img8.png" alt="img8"></p>
+<p>a symbol table of fastboot .. they generated it using nm (included in Android NDK Bundle) ..<br><img src="media/15484909712505/img9.png" alt="img9"><br><img src="media/15484909712505/img10.png" alt="img10"></p>
+<p><img src="media/15484909712505/img11.png" alt="img11"></p>
+<p>(we better reverse that binary in PART II)</p>
+<p>get back to atcmdserver again ..</p>
 
       
     </div>
