@@ -1,0 +1,38 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int uint32_t;
+
+typedef struct {
+    uint32_t len;
+    //uint32_t n0inv;
+    uint32_t n[32];
+    uint32_t exponent[32];
+} RSAPublicKey;
+
+// Define the file
+
+LittleEndian();
+
+
+//SetBackColor( cLtGreen );
+
+// Sometimes there are some zeros padding after the string chunk
+FSeek(0);
+
+//SetBackColor( cLtBlue );
+
+while( !FEof() ) 
+{
+    RSAPublicKey pubkey;
+}
