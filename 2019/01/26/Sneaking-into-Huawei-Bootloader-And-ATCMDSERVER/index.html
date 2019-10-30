@@ -210,6 +210,18 @@
 <p><strong>What is atcmdserver and how it works?</strong><br>Huawei made that binary(located as <span style="color:blue;">/system/bin/atcmdserver</span>) as a client which would do everything we sent AT commands from COM Port(Serial Port) and analyze them and output as programmed.</p>
 <p>I guess (but its sure) Huawei made some authorized software which could do services like Changing Sales Region, Making Network Restrictions, Reading FRP Unlocking Keys, Reading Bootloader Unlock Codes, and much more…</p>
 <p>First of all, that client softwares requesting authorize key from phone like this way. </p>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-3782788884519605"
+     data-ad-slot="3733674768"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AT^CHECKAUTHORITY\r\n</span><br></pre></td></tr></table></figure>
 <p>I just wrote <a href="files/TriggerHWAT_mac.py">a python script</a> to trigger that ..</p>
 <p><img src="media/15484909712505/img1.png" alt="img1"></p>
@@ -220,21 +232,69 @@
 <p>just find CHECKAUTHORITY so it would leads u to a global function</p>
 <p>the function reference located on 0x68C50. Decompile it.</p>
 <p><img src="media/15484909712505/img4.png" alt="img4"></p>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-3782788884519605"
+     data-ad-slot="3733674768"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <p>in that function generate random 4 bytes from /dev/urandom and encrypt it using RSA-1020 (yes its 1020 bit) Bit Public Key. I pointed <span style="color:blue;">g_table</span> that is a pointer to a factory public key including Modulus(N) and Exponent(E). They existed in the function <em>initTables</em>.</p>
 <p><img src="media/15484909712505/img12.png" alt="img12"></p>
 <p>copy 520bytes to the global variable g_table.<br>In that table, two public keys declared clearly.<br>In the <a href="https://sourceforge.net/projects/rsaref/" target="_blank" rel="noopener">RSARef lib</a>‘s rsaref.h, PublicKey struct is declared as following ..</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RSA public and private key.</span></span><br><span class="line"> <span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> bits;                           <span class="comment">// length in bits of modulus //</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> modulus[MAX_RSA_MODULUS_LEN];                    <span class="comment">// modulus</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> exponent[MAX_RSA_MODULUS_LEN];           <span class="comment">// public exponent</span></span><br><span class="line"> &#125; R_RSA_PUBLIC_KEY;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">int</span> bits;<span class="comment">// length in bits of modulus</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> modulus[MAX_RSA_MODULUS_LEN];<span class="comment">// modulus in 32 bytes array</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> publicExponent[MAX_RSA_MODULUS_LEN];<span class="comment">//public exponent</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> exponent[MAX_RSA_MODULUS_LEN];          <span class="comment">// private exponent</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> prime[<span class="number">2</span>][MAX_RSA_PRIME_LEN];               <span class="comment">// prime factors //</span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> primeExponent[<span class="number">2</span>][MAX_RSA_PRIME_LEN];   <span class="comment">// exponents for CRT </span></span><br><span class="line">   <span class="keyword">unsigned</span> <span class="keyword">char</span> coefficient[MAX_RSA_PRIME_LEN];          <span class="comment">// CRT coefficient</span></span><br><span class="line"> &#125; R_RSA_PRIVATE_KEY;</span><br></pre></td></tr></table></figure>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-3782788884519605"
+     data-ad-slot="3733674768"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <p>and it stored in binary as following so i want to seen more accurately extract that 520bytes to a file and saved. File can be download <a href="files/g_table.bin">here</a>.</p>
 <p><img src="media/15484909712505/img13.png" alt="img13"></p>
 <p>Unsigned Integers with<br><span style="color:green;">green block</span> : RSAPublicKey bit length<br><span style="color:orange;">yellow block</span> : Modulus Big Integer ( 0x0912C0F87E7EFEE5….FA0551AF )<br><span style="color:pink;">pink block</span> : exponent ( <span style="color:blue;">0x10001</span> as big-endian )</p>
 <p><img src="media/15484909712505/img14.png" alt="img14"></p>
 <p>they only used secondary public key in <a href="files/g_table.bin">g_table.bin</a>.<br>I made <a href="files/R_PublicKey.bt">a template for 010Editor</a> it would describe pubkey[1]. Public Key length is 1024bit. (note: integer arrays are in Little-Endian format due to running CPU. Most of ARM CPU using Little-Endian format in these days. So <strong><em>0xAF 0x51 0x05 0xFA</em></strong> is the really represent the <strong><em>0xFA0551AF</em></strong> value.<br>Modulus written in RSA Public Key(in RSARef not on OpenSSL library) only from backward.<br>So actual Modulus(RSA_N) integer in hex is</p>
 <p><em>0x0912C0F87E7EFEE5D85858B316A3AB072F3131EF383E1A01F098E38AFB1686693F7A18A9CDA8A41A291D07500B84BDB37D8B98C624D84ED242D306CE4A204BD9B8CD3668802854D48BE2D25D10625C739E4069CB7378EEC0F69185E8B02A186E8096E4EC2826CF06DDF82638409B4FF503A752E7B84F29728E9D3E34FA0551AF</em></p>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-3782788884519605"
+     data-ad-slot="3733674768"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <p>in decimal:</p>
 <p><em>6371457741316914519765021525340956239052128380308402591292603359606828731052296091003332194256971129013949259859765815841439688088057240271314114099759698768636623860627677734659495483811544094843375673972366223779423963530369710323510574439137697212350925753366223963018451648320826942884521536514194493871</em></p>
 <p>I think I need to explain how RSA Encryption works. RSA have two keys which are a public and a private. Encryption need just a public key but decryption doesnt. atcmdserver just encrypt random 4 bytes with Public Key and output the encrypted Big Integer array. So we have to decrypt them with Private Key and encrypt again with same private key and then send result to the phone via AT command as following :</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">AT ^ CONFORMAUTHORITY:8123884838348988...</span><br><span class="line">reply: OKAY</span><br></pre></td></tr></table></figure>
 <p>we should take a look more in depth ..</p>
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-3782788884519605"
+     data-ad-slot="3733674768"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 <p>decompile GenerateSeed function<br>it just put Random 4 bytes value into PKCS#1 1.5 Padding format.<br>the padded message would be like following ..</p>
 <p>in hex<br>0001FFFFFFFF…FFFF00[generated random 4bytes]<br><img src="media/15484909712505/img5.png" alt="img5"></p>
 <p>and then the put padded formatted array into RSAPublicBlock and get output value.</p>
@@ -434,5 +494,7 @@
 
 
   </div>
+
+  
 </body>
 </html>
