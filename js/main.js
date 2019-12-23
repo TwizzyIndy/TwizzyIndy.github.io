@@ -54,7 +54,7 @@ require([], function (){
     }
 
     //是否使用fancybox
-    if(yiliaConfig.fancybox === true){
+    if(yiliaConfig.fancybox === false){
         require([yiliaConfig.rootUrl + 'fancybox/jquery.fancybox.js'], function(pc){
             var isFancy = $(".isFancy");
             if(isFancy.length != 0){
@@ -70,7 +70,7 @@ require([], function (){
 
     }
     //是否开启动画
-    if(yiliaConfig.animate === true){
+    if(yiliaConfig.animate === false){
 
         require([yiliaConfig.rootUrl + 'js/jquery.lazyload.js'], function(){
             //avatar
